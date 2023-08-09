@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/services/auth_utility.dart';
 import 'package:task_manager_app/ui/screens/login_screen.dart';
+import '../screens/update_profile_screen.dart';
 
 class UserProfileBanner extends StatefulWidget {
-  const UserProfileBanner({super.key});
+  final bool? isUpdateScreen;
+
+  const UserProfileBanner({super.key, this.isUpdateScreen});
 
   @override
   State<UserProfileBanner> createState() => _UserProfileBannerState();
@@ -15,8 +18,16 @@ class _UserProfileBannerState extends State<UserProfileBanner> {
     return Container(
       color: Colors.green,
       child: ListTile(
-          //onTap: (){},
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          onTap: () {
+            if ((widget.isUpdateScreen ?? false) == false) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UpdateProfileScreen()));
+            }
+          },
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
           //tileColor: Colors.blue,
 
           //enabled: true,
@@ -38,7 +49,8 @@ class _UserProfileBannerState extends State<UserProfileBanner> {
               if (mounted) {
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
                     (route) => false);
               }
             },
