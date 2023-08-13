@@ -10,6 +10,8 @@ class Urls {
   static String deleteTask(String id) => "$baseUrl/deleteTask/$id";
   static String updateTask(String id, String status) => "$baseUrl/updateTaskStatus/$id/$status";
   static String updateProfile = "$baseUrl/profileUpdate";
-
+  static String sendOTPtoEmail(String email) => "$baseUrl/RecoverVerifyEmail/$email";
+  static String verifyOTP(String email, String otp) => "$baseUrl/RecoverVerifyOTP/$email/$otp";
+  static String resetPassword = "$baseUrl/RecoverResetPass";
 
 }
