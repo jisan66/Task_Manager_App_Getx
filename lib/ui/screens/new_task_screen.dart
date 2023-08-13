@@ -219,8 +219,6 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   }
 
   void showStatusUpdateBottomSheet(TaskData task) {
-
-
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
