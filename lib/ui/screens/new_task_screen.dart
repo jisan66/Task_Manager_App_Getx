@@ -6,6 +6,7 @@ import 'package:task_manager_app/services/network_response.dart';
 import 'package:task_manager_app/services/utils/urls.dart';
 import 'package:task_manager_app/ui/screens/add_new_task.dart';
 import 'package:task_manager_app/ui/screens/update_task_bottom_sheet.dart';
+import 'package:task_manager_app/ui/screens/update_task_status_sheet.dart';
 import 'package:task_manager_app/ui/widgets/screen_background.dart';
 import 'package:task_manager_app/ui/widgets/summary_card.dart';
 import 'package:task_manager_app/ui/widgets/task_list_tile.dart';
@@ -129,11 +130,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                       ),
               ),
-              _isSummaryCountInProgress
-                  ? const Center(
-                      child: LinearProgressIndicator(),
-                    )
-                  : Padding(
+
+                  Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                         height: 80,
@@ -228,7 +226,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, updateState) {
-          return UpdateTaskBottomSheet(task: task, onUpdate: (){
+          return UpdateTaskStatusSheet(task: task, onUpdate: (){
             getNewTaskList();
           });
         });

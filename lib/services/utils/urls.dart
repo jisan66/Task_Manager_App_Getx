@@ -9,4 +9,7 @@ class Urls {
   static String listTaskByStatusProgress = "$baseUrl/listTaskByStatus/Pregress";
   static String deleteTask(String id) => "$baseUrl/deleteTask/$id";
   static String updateTask(String id, String status) => "$baseUrl/updateTaskStatus/$id/$status";
+  static String updateProfile = "$baseUrl/profileUpdate";
+
+
 }

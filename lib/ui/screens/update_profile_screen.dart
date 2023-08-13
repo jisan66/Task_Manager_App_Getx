@@ -176,6 +176,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       ),
     );
   }
+
+  // void selectImage() {
+  //   picker.pickImage(source: ImageSource.gallery).then((xFile) {
+  //     if (xFile != null) {
+  //       imageFile = xFile;
+  //       if (mounted) {
+  //         setState(() {});
+  //       }
+  //     }
+  //   });
+  // }
   void selectImage() {
     picker.pickImage(source: ImageSource.gallery).then((xFile) {
       if (xFile != null) {

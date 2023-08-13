@@ -5,6 +5,8 @@ import 'package:task_manager_app/services/utils/urls.dart';
 import 'package:task_manager_app/ui/widgets/screen_background.dart';
 import 'package:task_manager_app/ui/widgets/user_profile_banner.dart';
 
+import 'new_task_screen.dart';
+
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({Key? key}) : super(key: key);
 
@@ -101,6 +103,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                         child: ElevatedButton(
                             onPressed: () {
                               addNewTask();
+                              Navigator.pop(context,MaterialPageRoute(builder: (context)=>const NewTaskScreen()));
                             },
                             child: const Icon(Icons.arrow_forward)),
                       ),

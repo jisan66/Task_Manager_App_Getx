@@ -14,6 +14,12 @@ class AuthUtility{
     userinfo = model;
   }
 
+  static Future<void> updateUserInfo(UserData data)async {
+    userinfo.data = data;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("user-data", jsonEncode(userinfo.toJson()));
+  }
+
   static Future<LoginModel> getUserInfo()async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String value = prefs.getString("user-data")!;

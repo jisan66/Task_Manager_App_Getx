@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager_app/services/auth_utility.dart';
 import 'package:task_manager_app/ui/screens/login_screen.dart';
@@ -31,9 +32,15 @@ class _UserProfileBannerState extends State<UserProfileBanner> {
           //tileColor: Colors.blue,
 
           //enabled: true,
-          leading: const CircleAvatar(
-            backgroundImage: NetworkImage(
-                "https://logowik.com/content/uploads/images/flutter5786.jpg"),
+          leading: CircleAvatar(
+            radius: 15,
+            child: CachedNetworkImage(
+              imageUrl: AuthUtility.userinfo.data?.photo ?? "",
+              placeholder: (_, __) =>
+                  Image.asset("assets/images/user_image.jpg"),
+              errorWidget: (_, __, ___) =>
+                  Image.asset("assets/images/user_image.jpg"),
+            ),
           ),
           title: Text(
             "${AuthUtility.userinfo.data?.firstName ?? ""} ${AuthUtility.userinfo.data?.lastName ?? ""}",

@@ -66,100 +66,102 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ScreenBackground(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 60.0, horizontal: 24),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Get Started With",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    TextFormField(
-                      controller: _emailTEController,
-                      decoration: const InputDecoration(hintText: 'Email'),
-                      validator: (String? value) {
-                        if (value?.isEmpty ?? true) {
-                          return "Enter valid email";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    TextFormField(
-                      controller: _passwordTEController,
-                      obscureText: true,
-                      decoration: const InputDecoration(hintText: 'Password'),
-                      validator: (String? value) {
-                        if (value?.isEmpty ?? true) {
-                          return "Enter Password";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Visibility(
-                        visible: (_logInProgress==false),
-                        replacement: const Center(child: CircularProgressIndicator(),),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              if(!_formKey.currentState!.validate()){
-                                return;
-                              }
-                              Login();
-                            },
-                            child: const Icon(Icons.arrow_forward)),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 60.0, horizontal: 24),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Get Started With",
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Center(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const EmailVerificationScreen(),
-                            ),
-                          );
+                      TextFormField(
+                        controller: _emailTEController,
+                        decoration: const InputDecoration(hintText: 'Email'),
+                        validator: (String? value) {
+                          if (value?.isEmpty ?? true) {
+                            return "Enter valid email";
+                          }
+                          return null;
                         },
-                        child: const Center(
-                          child: Text(
-                            "Forgot Password",
-                            style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      TextFormField(
+                        controller: _passwordTEController,
+                        obscureText: true,
+                        decoration: const InputDecoration(hintText: 'Password'),
+                        validator: (String? value) {
+                          if (value?.isEmpty ?? true) {
+                            return "Enter Password";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Visibility(
+                          visible: (_logInProgress==false),
+                          replacement: const Center(child: CircularProgressIndicator(),),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                if(!_formKey.currentState!.validate()){
+                                  return;
+                                }
+                                Login();
+                              },
+                              child: const Icon(Icons.arrow_forward)),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const EmailVerificationScreen(),
+                              ),
+                            );
+                          },
+                          child: const Center(
+                            child: Text(
+                              "Forgot Password",
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Don't Have an Account?"),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SignUpScreen()),
-                                  (route) => false);
-                            },
-                            child: const Text("Sign up"))
-                      ],
-                    )
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't Have an Account?"),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const SignUpScreen()),
+                                    (route) => false);
+                              },
+                              child: const Text("Sign up"))
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -41,7 +41,7 @@ class NetworkCaller {
       if (response.statusCode == 200) {
         return NetworkResponse(true, response.statusCode, decodedResponse);
       } else if (response.statusCode == 401) {
-        if (isLogin) {
+        if (isLogin == false) {
           gotoLogin();
         }
       } else {
