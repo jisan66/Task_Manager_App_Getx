@@ -102,41 +102,32 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           child: Column(
             children: [
               const UserProfileBanner(),
-              GetBuilder<SummaryCountController>(builder: (_) {
-                if (_summaryCountController.isSummaryCountInProgress) {
-                  return const Center(
-                    child: LinearProgressIndicator(),
+              GetBuilder<SummaryCountController>(
+                builder: (_) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 80,
+                      width: double.infinity,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _summaryCountController.summaryCountModel.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return SummaryCard(
+                            title: _summaryCountController.summaryCountModel.data![index].sId ?? "New",
+                            number: _summaryCountController.summaryCountModel.data![index].sum ?? 0,
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider(
+                            height: 8,
+                          );
+                        },
+                      ),
+                    ),
                   );
                 }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 80,
-                    width: double.infinity,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _summaryCountController
-                              .summaryCountModel.data?.length ??
-                          0,
-                      itemBuilder: (context, index) {
-                        return SummaryCard(
-                          title: _summaryCountController
-                                  .summaryCountModel.data![index].sId ??
-                              "New",
-                          number: _summaryCountController
-                                  .summaryCountModel.data![index].sum ??
-                              0,
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Divider(
-                          height: 8,
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
+              ),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
