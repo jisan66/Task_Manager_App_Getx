@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/services/model/summary_count_model.dart';
+import 'package:get/get.dart';
 import 'package:task_manager_app/services/model/task_list_model.dart';
 import 'package:task_manager_app/services/network_caller.dart';
 import 'package:task_manager_app/services/network_response.dart';
+import 'package:task_manager_app/services/state_managers/summary_count_controller.dart';
 import 'package:task_manager_app/services/utils/urls.dart';
 import 'package:task_manager_app/ui/screens/add_new_task.dart';
 import 'package:task_manager_app/ui/screens/update_task_bottom_sheet.dart';
@@ -20,9 +21,10 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
-  bool _isSummaryCountInProgress = false, getNewListData = false;
+  bool getNewListData = false;
 
-  SummaryCountModel summaryCountModel = SummaryCountModel();
+  final SummaryCountController _summaryCountController =
+      Get.find<SummaryCountController>();
 
   TaskListModel taskListModel = TaskListModel();
 
@@ -30,31 +32,9 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getSummaryCount();
+      _summaryCountController.getSummaryCount();
       getNewTaskList();
     });
-  }
-
-  Future<void> getSummaryCount() async {
-    _isSummaryCountInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.taskStatusCount);
-    if (response.isSuccess) {
-      summaryCountModel = SummaryCountModel.fromJson(response.body!);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Status Count Failed!")));
-      }
-    }
-
-    _isSummaryCountInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   Future<void> getNewTaskList() async {
@@ -99,7 +79,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
 
   Future<void> updateTask(String taskId, String newStatus) async {
     final NetworkResponse response =
-    await NetworkCaller().getRequest(Urls.updateTask(taskId, newStatus));
+        await NetworkCaller().getRequest(Urls.updateTask(taskId, newStatus));
     if (response.isSuccess) {
       taskListModel.data!.removeWhere((element) => element.sId == taskId);
       if (mounted) {
@@ -122,43 +102,47 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           child: Column(
             children: [
               const UserProfileBanner(),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
-                child: _isSummaryCountInProgress
-                    ? const LinearProgressIndicator()
-                    : const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                      ),
-              ),
-
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 80,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: summaryCountModel.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            return SummaryCard(
-                              title:
-                                  summaryCountModel.data![index].sId ?? "New",
-                              number: summaryCountModel.data![index].sum ?? 0,
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Divider(
-                              height: 8,
-                            );
-                          },
-                        ),
-                      ),
+              GetBuilder<SummaryCountController>(builder: (_) {
+                if (_summaryCountController.isSummaryCountInProgress) {
+                  return const Center(
+                    child: LinearProgressIndicator(),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 80,
+                    width: double.infinity,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _summaryCountController
+                              .summaryCountModel.data?.length ??
+                          0,
+                      itemBuilder: (context, index) {
+                        return SummaryCard(
+                          title: _summaryCountController
+                                  .summaryCountModel.data![index].sId ??
+                              "New",
+                          number: _summaryCountController
+                                  .summaryCountModel.data![index].sum ??
+                              0,
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider(
+                          height: 8,
+                        );
+                      },
                     ),
+                  ),
+                );
+              }),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
                     getNewTaskList();
                   },
-                  child: _isSummaryCountInProgress
+                  child: _summaryCountController.isSummaryCountInProgress
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -224,9 +208,11 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, updateState) {
-          return UpdateTaskStatusSheet(task: task, onUpdate: (){
-            getNewTaskList();
-          });
+          return UpdateTaskStatusSheet(
+              task: task,
+              onUpdate: () {
+                getNewTaskList();
+              });
         });
       },
     );
