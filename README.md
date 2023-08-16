@@ -1,6 +1,6 @@
-# task_manager_app
+# task_manager_app_getx
 
-Task Manager App
+Task Manager App using GETx
 
 ## Getting Started
 
