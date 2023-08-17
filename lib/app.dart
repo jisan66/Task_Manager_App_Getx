@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_manager_app/services/state_managers/get_new_task_controller.dart';
 import 'package:task_manager_app/services/state_managers/login_controller.dart';
 import 'package:task_manager_app/services/state_managers/summary_count_controller.dart';
 import 'package:task_manager_app/ui/screens/splash_screen.dart';
@@ -53,5 +54,6 @@ class ControllerBinding extends Bindings {
   void dependencies() {
     Get.put<LoginController>(LoginController());
     Get.put<SummaryCountController>(SummaryCountController());
+    Get.put<GetNewTaskController>(GetNewTaskController());
   }
 }
