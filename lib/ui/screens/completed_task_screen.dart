@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:task_manager_app/ui/widgets/task_list_tile.dart';
 import 'package:task_manager_app/ui/widgets/user_profile_banner.dart';
 
 class CompletedTaskScreen extends StatelessWidget {
