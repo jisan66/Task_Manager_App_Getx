@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager_app/services/model/task_list_model.dart';
-import 'package:task_manager_app/services/network_caller.dart';
-import 'package:task_manager_app/services/network_response.dart';
 import 'package:task_manager_app/services/state_managers/get_new_task_controller.dart';
 import 'package:task_manager_app/services/state_managers/summary_count_controller.dart';
-import 'package:task_manager_app/services/utils/urls.dart';
 import 'package:task_manager_app/ui/screens/add_new_task.dart';
 import 'package:task_manager_app/ui/screens/update_task_bottom_sheet.dart';
 import 'package:task_manager_app/ui/screens/update_task_status_sheet.dart';
@@ -22,13 +19,12 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
+
   final SummaryCountController _summaryCountController =
-      Get.find<SummaryCountController>();
+  Get.find<SummaryCountController>();
 
-  final GetNewTaskController _getNewTaskController =
-      Get.find<GetNewTaskController>();
+  final GetNewTaskController _getNewTaskController = Get.find<GetNewTaskController>();
 
-  TaskListModel taskListModel = TaskListModel();
 
   @override
   void initState() {
@@ -39,39 +35,6 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     });
   }
 
-  Future<void> deleteTask(String taskId) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.deleteTask(taskId));
-    if (response.isSuccess) {
-      taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      if (mounted) {
-        setState(() {});
-      }
-      // getNewTaskList();
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to delete data")));
-      }
-    }
-  }
-
-  Future<void> updateTask(String taskId, String newStatus) async {
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.updateTask(taskId, newStatus));
-    if (response.isSuccess) {
-      taskListModel.data!.removeWhere((element) => element.sId == taskId);
-      if (mounted) {
-        setState(() {});
-      }
-      // getNewTaskList();
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to delete data")));
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +45,11 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
             children: [
               const UserProfileBanner(),
               GetBuilder<SummaryCountController>(builder: (_) {
+                if (_summaryCountController.isSummaryCountInProgress) {
+                  return const Center(
+                    child: LinearProgressIndicator(),
+                  );
+                }
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -90,15 +58,15 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _summaryCountController
-                              .summaryCountModel.data?.length ??
+                          .summaryCountModel.data?.length ??
                           0,
                       itemBuilder: (context, index) {
                         return SummaryCard(
                           title: _summaryCountController
-                                  .summaryCountModel.data![index].sId ??
+                              .summaryCountModel.data![index].sId ??
                               "New",
                           number: _summaryCountController
-                                  .summaryCountModel.data![index].sum ??
+                              .summaryCountModel.data![index].sum ??
                               0,
                         );
                       },
@@ -120,29 +88,29 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                       },
                       child: _summaryCountController.isSummaryCountInProgress
                           ? const Center(
-                              child: CircularProgressIndicator(),
-                            )
+                        child: CircularProgressIndicator(),
+                      )
                           : ListView.separated(
-                              itemCount: _getNewTaskController.taskListModel.data?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                return TaskListTile(
-                                  data: _getNewTaskController.taskListModel.data![index],
-                                  onEdit: () {
-                                    // showBottomEditSheet(taskListModel.data![index]);
-                                    showStatusUpdateBottomSheet(
-                                        taskListModel.data![index]);
-                                  },
-                                  onDelete: () {
-                                    deleteTask(taskListModel.data![index].sId!);
-                                  },
-                                );
-                              },
-                              separatorBuilder: (BuildContext context, int index) {
-                                return const Divider(
-                                  height: 8,
-                                );
-                              },
-                            ),
+                        itemCount: _getNewTaskController.taskListModel.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return TaskListTile(
+                            data: _getNewTaskController.taskListModel.data![index],
+                            onEdit: () {
+                              // showBottomEditSheet(taskListModel.data![index]);
+                              showStatusUpdateBottomSheet(
+                                  _getNewTaskController.taskListModel.data![index]);
+                            },
+                            onDelete: () {
+                              _getNewTaskController.deleteTask(_getNewTaskController.taskListModel.data![index].sId!);
+                            },
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const Divider(
+                            height: 8,
+                          );
+                        },
+                      ),
                     ),
                   );
                 }

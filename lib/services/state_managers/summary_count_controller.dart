@@ -21,6 +21,7 @@ class SummaryCountController extends GetxController {
     _isSummaryCountInProgress = false;
     if (response.isSuccess) {
       _summaryCountModel = SummaryCountModel.fromJson(response.body!);
+      update();
       return true;
     } else {
       update();

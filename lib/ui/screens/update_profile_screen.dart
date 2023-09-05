@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:task_manager_app/services/auth_utility.dart';
+import 'package:task_manager_app/services/model/login_model.dart';
+import 'package:task_manager_app/ui/screens/bottom_nav_base_screen.dart';
+import '../../services/network_caller.dart';
+import '../../services/network_response.dart';
+import '../../services/utils/urls.dart';
 import '../widgets/screen_background.dart';
 import '../widgets/user_profile_banner.dart';
 
@@ -12,15 +17,76 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  void selectImage() {
+    picker.pickImage(source: ImageSource.gallery).then((xFile) {
+      if (xFile != null) {
+        imageFile = xFile;
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
+  }
+
+  UserData userData = AuthUtility.userinfo.data!;
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _firstNameTEController = TextEditingController();
   final TextEditingController _lastNameTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
 
+  bool _getUserDataInProgress = false;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   XFile? imageFile;
   ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailTEController.text = userData.email ?? " ";
+    _firstNameTEController.text = userData.firstName ?? " ";
+    _lastNameTEController.text = userData.lastName ?? " ";
+    _mobileTEController.text = userData.mobile ?? " ";
+  }
+
+  Future<void> updateProfileData() async {
+    _getUserDataInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    final Map<String, dynamic> requestBody = {
+      "firstName": _firstNameTEController.text.trim(),
+      "lastName": _lastNameTEController.text.trim(),
+    };
+
+    if (_passwordTEController.text.isNotEmpty) {
+      requestBody['password'] = _passwordTEController.text;
+    }
+
+    final NetworkResponse response =
+        await NetworkCaller().postRequest(Urls.updateProfile, requestBody);
+    _getUserDataInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    if (response.isSuccess) {
+      userData.firstName = _firstNameTEController.text.trim();
+      userData.lastName = _lastNameTEController.text.trim();
+      userData.mobile = _mobileTEController.text.trim();
+      AuthUtility.updateUserInfo(userData);
+      _passwordTEController.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Profile updated!')));
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile update failed! Try again.')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +147,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       height: 12,
                     ),
                     TextFormField(
+                      readOnly: true,
                       controller: _emailTEController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
@@ -162,10 +229,21 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Update'),
-                      ),
+                      child: _getUserDataInProgress
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ElevatedButton(
+                              onPressed: () {
+                                updateProfileData();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const BottomNavBaseScreen()));
+                              },
+                              child: const Text('Update'),
+                            ),
                     )
                   ],
                 ),
@@ -176,25 +254,15 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       ),
     );
   }
-
-  // void selectImage() {
-  //   picker.pickImage(source: ImageSource.gallery).then((xFile) {
-  //     if (xFile != null) {
-  //       imageFile = xFile;
-  //       if (mounted) {
-  //         setState(() {});
-  //       }
-  //     }
-  //   });
-  // }
-  void selectImage() {
-    picker.pickImage(source: ImageSource.gallery).then((xFile) {
-      if (xFile != null) {
-        imageFile = xFile;
-        if (mounted) {
-          setState(() {});
-        }
-      }
-    });
-  }
 }
+
+// void selectImage() {
+//   picker.pickImage(source: ImageSource.gallery).then((xFile) {
+//     if (xFile != null) {
+//       imageFile = xFile;
+//       if (mounted) {
+//         setState(() {});
+//       }
+//     }
+//   });
+// }

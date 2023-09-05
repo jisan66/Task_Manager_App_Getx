@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_manager_app/services/state_managers/get_cancelled_controller.dart';
+import 'package:task_manager_app/services/state_managers/get_in_progress_controller.dart';
 import 'package:task_manager_app/services/state_managers/get_new_task_controller.dart';
 import 'package:task_manager_app/services/state_managers/login_controller.dart';
 import 'package:task_manager_app/services/state_managers/summary_count_controller.dart';
 import 'package:task_manager_app/ui/screens/splash_screen.dart';
+
+import 'services/state_managers/get_completed_task_controller.dart';
 
 class TaskManagerApp extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey<NavigatorState>();
@@ -55,5 +59,8 @@ class ControllerBinding extends Bindings {
     Get.put<LoginController>(LoginController());
     Get.put<SummaryCountController>(SummaryCountController());
     Get.put<GetNewTaskController>(GetNewTaskController());
+    Get.put<GetCompletedTaskController>(GetCompletedTaskController());
+    Get.put<GetInProgressController>(GetInProgressController());
+    Get.put<GetCancelledTaskController>(GetCancelledTaskController());
   }
 }
